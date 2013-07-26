@@ -76,7 +76,7 @@ extends SpecialForm(sfh.loc, sfh.tag, sfh.content) with Applicable {
    * @return	Some bindings if the match was successful, and `None` if not.
    */
   private def _doMatching(subject: BasicAtom,
-      binds: Bindings = Bindings()): Option[Bindings] = {
+      binds: Bindings = Bindings()): AtomSeq = {
     // Local function to check the guards.
     def checkGuards(candidate: Bindings): Boolean = {
       for (guard <- guards) {
@@ -85,20 +85,29 @@ extends SpecialForm(sfh.loc, sfh.tag, sfh.content) with Applicable {
       }
       true
     }
+
+    var retval:IndexedSeq[BasicAtom] = IndexedSeq[BasicAtom]()
     
     // Try to match the given atom against the pattern.
     pattern.tryMatch(subject, binds) match {
-      case fail:Fail => return None
+      case fail:Fail => return AtomSeq(NoProps,retval)
       case Match(newbinds) =>
         // We got a match.  Check the guards.
-        if (checkGuards(newbinds ++ binds)) Some(newbinds ++ binds) else return None
+        if (checkGuards(newbinds ++ binds)) {
+	  retval = retval :+ BindingsAtom(newbinds ++ binds)
+	  return AtomSeq(NoProps,retval)
+	} else {
+	  return AtomSeq(NoProps,retval)
+        }
       case Many(iter) =>
         // We might have many matches.  We search through them until we find
         // one that satisfies the guards, or until we run out of candidates.
         for (newbinds <- iter) {
-          if (checkGuards(newbinds ++ binds)) return Some(newbinds ++ binds)
+          if (checkGuards(newbinds ++ binds)) {
+	    retval = retval :+ BindingsAtom(newbinds ++ binds)
+	  }
         }
-        return None
+        return AtomSeq(NoProps,retval)
     }
   }
 
@@ -111,10 +120,7 @@ extends SpecialForm(sfh.loc, sfh.tag, sfh.content) with Applicable {
    * @param bypass	Whether to bypass native handlers.
    * @return	Bindings, or Nothing.
    */
-  def doApply(subject: BasicAtom, bypass: Boolean) = _doMatching(subject) match {
-    case None => NONE
-    case Some(binds) => BindingsAtom(binds)
-  }
+  def doApply(subject: BasicAtom, bypass: Boolean) = _doMatching(subject)
   
   override def equals(other: Any) = other match {
     case oma: MatchAtom =>
