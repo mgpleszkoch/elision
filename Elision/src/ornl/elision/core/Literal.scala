@@ -132,8 +132,8 @@ extends BasicAtom {
   /**
    * The hash code is computed from the type and the value.
    */
-  override lazy val hashCode = theType.hashCode * 31 + value.hashCode
-  override lazy val otherHashCode = theType.otherHashCode +
+  override def hashCode = theType.hashCode * 31 + value.hashCode
+  override def otherHashCode = theType.otherHashCode +
     8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
   
   /**
@@ -224,8 +224,8 @@ object Literal {
 case class IntegerLiteral(typ: BasicAtom, value: BigInt)
 extends Literal[BigInt](typ) {
 
-  override lazy val hashCode = theType.hashCode * 31 + value.hashCode
-  override lazy val otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
+  override def hashCode = theType.hashCode * 31 + value.hashCode
+  override def otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
 
   /**
    * Alternate constructor with default `INTEGER` type.
@@ -271,8 +271,8 @@ extends Literal[BigInt](typ) {
 case class BitStringLiteral(typ: BasicAtom, var bits: BigInt, len: Int)
 extends Literal[(BigInt, Int)](typ) {
 
-  override lazy val hashCode = theType.hashCode * 31 + value.hashCode
-  override lazy val otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
+  override def hashCode = theType.hashCode * 31 + value.hashCode
+  override def otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
 
   /** If true, prefer to display this as a signed value.  If false, do not. */
   val neghint = (bits < 0)
@@ -371,8 +371,8 @@ extends Literal[(BigInt, Int)](typ) {
 case class StringLiteral(typ: BasicAtom, value: String)
 extends Literal[String](typ) {
 
-  override lazy val hashCode = theType.hashCode * 31 + value.hashCode
-  override lazy val otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
+  override def hashCode = theType.hashCode * 31 + value.hashCode
+  override def otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
 
   /**
    * Alternate constructor with default `STRING` type.
@@ -414,8 +414,8 @@ extends Literal[Symbol](typ) {
    */
   def this(value: Symbol) = this(SYMBOL, value)
   
-  override lazy val otherHashCode = (value.toString).foldLeft(BigInt(0))(other_hashify)
-  override lazy val hashCode = theType.hashCode * 31 + value.toString.hashCode
+  override def otherHashCode = (value.toString).foldLeft(BigInt(0))(other_hashify)
+  override def hashCode = theType.hashCode * 31 + value.toString.hashCode
 
   def rewrite(binds: Bindings) = {
 		theType.rewrite(binds) match {
@@ -453,8 +453,8 @@ extends Literal[Symbol](typ) {
 case class BooleanLiteral(typ: BasicAtom, value: Boolean)
 extends Literal[Boolean](typ) {
 
-  override lazy val hashCode = theType.hashCode * 31 + value.hashCode
-  override lazy val otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
+  override def hashCode = theType.hashCode * 31 + value.hashCode
+  override def otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
 
   override val isTrue = value == true
   override val isFalse = value == false
@@ -502,7 +502,7 @@ extends Literal[Boolean](typ) {
 case class IEEE754(width: Int, significand: Int) {
   require (significand < (width - 2))
 
-  override lazy val hashCode = width * 31 + significand
+  override def hashCode = width * 31 + significand
 
   /** The exponent width. */
   lazy val exponent = width - significand - 1
@@ -576,8 +576,8 @@ object IEEE754Half extends IEEE754(16, 10)
 case class FloatLiteral(typ: BasicAtom, significand: BigInt, exponent: Int,
     radix: Int) extends Literal[(BigInt, Int, Int)](typ) {
 
-  override lazy val hashCode = theType.hashCode * 31 + value.hashCode
-  override lazy val otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
+  override def hashCode = theType.hashCode * 31 + value.hashCode
+  override def otherHashCode = typ.otherHashCode + 8191*(value.toString).foldLeft(BigInt(0))(other_hashify)
 
   // Validate the radix and compute the prefix string.
   private lazy val _prefix = radix match {

@@ -267,8 +267,8 @@ extends BasicAtom(loc) {
   val theType: BasicAtom = ANY
   lazy val isTerm = tag.isTerm && content.isTerm
 
-  override lazy val hashCode = tag.hashCode * 31 + content.hashCode
-  override lazy val otherHashCode = tag.otherHashCode + 8191*content.otherHashCode
+  override def hashCode = tag.hashCode * 31 + content.hashCode
+  override def otherHashCode = tag.otherHashCode + 8191*content.otherHashCode
   
   override def equals(other: Any) = other match {
     case sf:SpecialForm =>
@@ -331,7 +331,7 @@ object SpecialForm {
    * @param content		The content.
    * @return	The constructed special form.
    */
-  def apply(loc: Loc, tag: BasicAtom, content: BasicAtom) = {
+  def apply(loc: Loc, tag: BasicAtom, content: BasicAtom): BasicAtom  = {
     val sfh = new SpecialFormHolder(loc, tag, content)
     tag match {
 	    case sl:SymbolLiteral => sl.value match {

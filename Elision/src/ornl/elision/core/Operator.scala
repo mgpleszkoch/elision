@@ -265,8 +265,8 @@ class OperatorRef(val operator: Operator) extends BasicAtom with Applicable {
     case _ => false
   }
 
-  override lazy val hashCode = 31 * operator.hashCode
-  override lazy val otherHashCode = 8191 * operator.otherHashCode
+  override def hashCode = 31 * operator.hashCode
+  override def otherHashCode = 8191 * operator.otherHashCode
 }
 
 /**

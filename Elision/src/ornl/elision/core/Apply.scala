@@ -67,8 +67,8 @@ abstract class Apply(val op: BasicAtom, val arg: BasicAtom) extends BasicAtom {
   lazy val deBruijnIndex = op.deBruijnIndex max arg.deBruijnIndex
   
   /** The hash code for this apply. */
-  override lazy val hashCode = op.hashCode * 31 + arg.hashCode
-  override lazy val otherHashCode = op.otherHashCode + 8191*arg.otherHashCode
+  override def hashCode = op.hashCode * 31 + arg.hashCode
+  override def otherHashCode = op.otherHashCode + 8191*arg.otherHashCode
 
   //println("** Making apply " + op.toParseString + " " + arg.toParseString)
   op match {

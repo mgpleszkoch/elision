@@ -208,8 +208,8 @@ extends BasicAtom with Applicable {
     }
   }
   
-  override lazy val hashCode = lvar.hashCode * 31 + body.hashCode
-  override lazy val otherHashCode = lvar.otherHashCode + 8191*body.otherHashCode
+  override def hashCode = lvar.hashCode * 31 + body.hashCode
+  override def otherHashCode = lvar.otherHashCode + 8191*body.otherHashCode
   
   override def equals(other: Any) = other match {
     case lambda:Lambda =>
