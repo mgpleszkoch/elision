@@ -38,6 +38,7 @@
 package ornl.elision.core
 
 import scala.collection.immutable.HashSet
+import scala.collection.mutable.HashMap
 import scala.collection.mutable.{HashSet => MutableHashSet, BitSet}
 import scala.compat.Platform
 import scala.util.DynamicVariable
@@ -131,11 +132,11 @@ trait Applicable {
  *    
  *  - Implement `rewrite`.
  *  
- *  - Visit [[ornl.elision.core.ElisionGenerator]] and add code to create a
+ *  - Visit [[ornl.elision.dialects.ElisionGenerator]] and add code to create a
  *    string from the new atom.  This must return a string that is parseable by
- *    [[ornl.elision.core.AtomParser]] to re-create the atom.
+ *    [[ornl.elision.parse.ElisionParser]] to re-create the atom.
  *    
- *  - Visit [[ornl.elision.core.ScalaGenerator]] and add code to create a
+ *  - Visit [[ornl.elision.dialects.ScalaGenerator]] and add code to create a
  *    string from the new atom.  This must return a string that is parseable by
  *    Scala to re-create the atom.  In many cases making the class into a
  *    `case class` will be sufficient, but if there are arguments that are
@@ -194,6 +195,9 @@ trait Applicable {
 abstract class BasicAtom(val loc: Loc = Loc.internal) extends HasOtherHash {
   import scala.collection.mutable.{Map => MMap}
 
+  /** Cache the operator applies contained in this atom. */
+  var myOperators : MMap[String, Apply] = new HashMap[String, Apply]
+
   /**
    * The rulesets with respect to which this atom is clean. If this is
    * not None the atom has already been rewritten with some set of
@@ -214,7 +218,16 @@ abstract class BasicAtom(val loc: Loc = Loc.internal) extends HasOtherHash {
    * lower the chances of a hash collision (both different hash codes
    * will need to collide for a hash collision to occur).
    */
-  val otherHashCode: BigInt
+  override def otherHashCode: BigInt = {
+    println("BasicAtom::otherHashCode not overriden for " + this)
+    0
+  }
+
+  /** YOU MUST OVERRIDE THIS IN INHERITED CLASSES! */
+  override def hashCode = {
+    println("BasicAtom::hashCode not overriden for " + this)
+    0
+  }
 
   /**
    * If true then this atom can be bound.  Only variables should be bound, so
@@ -433,7 +446,7 @@ abstract class BasicAtom(val loc: Loc = Loc.internal) extends HasOtherHash {
 
   /**
    * Generate a parseable string from this atom.  The returned string should
-   * be able to "round trip," that is, [[ornl.elision.parse.AtomParser]] must
+   * be able to "round trip," that is, [[ornl.elision.parse.ElisionParser]] must
    * be able to parse it and return an atom equal to this one.
    * 
    * @return	The string.
@@ -503,6 +516,13 @@ abstract class BasicAtom(val loc: Loc = Loc.internal) extends HasOtherHash {
  * compute the constant pool for an atom.
  */
 object BasicAtom {
+
+  /** Only track and return these operators from BasicAtom::getOperators(). */
+  val trackedOperators : java.util.HashSet[String] = new java.util.HashSet[String]()
+
+  def trackOperator(op : String) = {
+    trackedOperators.add(op)
+  }
   
   /*
    * FIXME  Eliminate all timeout stuff from this object.

@@ -71,7 +71,7 @@ import ornl.elision.util.other_hashify
  * For proposed binding of variable `$``x` to value `v`, with guard `g`, we do
  * the following.
  * 
- * - If `g` is a [[ornl.elision.core.Rewritable]], then `g.a` is computed and
+ * - If `g` is a [[ornl.elision.core.Rewriter]], then `g.a` is computed and
  *   if the flag is true, `$``x` is bound to the resulting atom.
  * - If `g` is a [[ornl.elision.core.Applicable]], then `g.a` is computed and
  *   `$``x` is bound the result.
@@ -259,8 +259,8 @@ class Variable(typ: BasicAtom, val name: String,
    */
   def asMetaVariable = MetaVariable(typ, name, guard, labels, byName)
       
-  override lazy val hashCode = typ.hashCode * 31 + name.hashCode
-  lazy val otherHashCode = typ.otherHashCode +
+  override def hashCode = typ.hashCode * 31 + name.hashCode
+  override def otherHashCode = typ.otherHashCode +
     8191*(name.toString).foldLeft(BigInt(0))(other_hashify)+1
   
   override def equals(varx: Any) = varx match {
@@ -333,8 +333,8 @@ class MetaVariable(typ: BasicAtom, name: String,
   override val isTerm = false
   /** Metavariable prefix. */
   override val prefix = "$$"
-  override lazy val hashCode = typ.hashCode * 37 + name.hashCode
-  override lazy val otherHashCode = typ.otherHashCode +
+  override def hashCode = typ.hashCode * 37 + name.hashCode
+  override def otherHashCode = typ.otherHashCode +
     8193*(name.toString).foldLeft(BigInt(0))(other_hashify)+1
     
   /**

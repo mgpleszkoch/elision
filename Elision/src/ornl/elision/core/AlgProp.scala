@@ -33,7 +33,8 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ======================================================================*/
+ * ======================================================================
+ * */
 package ornl.elision.core
 
 import ornl.elision.util.ElisionException
@@ -115,10 +116,10 @@ class AlgProp(
     case Some(atom) => atom.hashCode
   }
   
-  lazy val otherHashCode =
+  override def otherHashCode =
     (this.toString).foldLeft(BigInt(0))(other_hashify)+1
     
-  override lazy val hashCode =
+  override def hashCode =
     (((((_codify(associative) * 31) +
     _codify(commutative) * 31) +
     _codify(idempotent) * 31) +
@@ -507,7 +508,7 @@ object AlgProp {
   /**
    * Create an algebraic properties object.
    * 
-   * @param loc           Location of this properties object declaration.
+   * @param loc          Location of this properties object declaration.
 	 * @param associative		Optional associativity.  Default is none.
 	 * @param commutative		Optional commutativity.  Default is none.
 	 * @param idempotent		Optional idempotency.  Default is none.
